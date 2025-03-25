@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alzheimer's Disease Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(79, 70, 229, 0.9), rgba(79, 70, 229, 0.8)), url('/api/placeholder/1200/600') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--light);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            margin-left: 10px;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content Sections */
+        section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        /* Disease Levels Section */
+        .levels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .level-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .level-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .level-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .level-content {
+            padding: 1.5rem;
+        }
+
+        .level-content p {
+            margin-bottom: 1rem;
+        }
+
+        .level-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Detection Section */
+        .detection-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-area {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .result-area {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--primary);
+            border-radius: 5px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .drop-zone:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        .drop-zone-prompt {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone-input {
+            display: none;
+        }
+
+        .preview-container {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 5px;
+        }
+
+        .result-container {
+            display: none;
+        }
+
+        .result-heading {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .result-details {
+            background-color: var(--light);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Precautions Section */
+        .precautions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .precaution-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .precaution-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .precaution-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .precaution-content {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .precaution-content h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        /* About Section */
+        .about-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .about-content {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #334155;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            transition: background-color 0.3s;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary);
+        }
+
+        /* Level Description Blocks */
+        .level-description {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+
+        .cn {
+            background-color: #dcfce7;
+            border-left: 4px solid #22c55e;
+        }
+
+        .mci {
+            background-color: #ffedd5;
+            border-left: 4px solid #f97316;
+        }
+
+        .emci {
+            background-color: #fef3c7;
+            border-left: 4px solid #eab308;
+        }
+
+        .lmci {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .ad {
+            background-color: #fecaca;
+            border-left: 4px solid #b91c1c;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: white;
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+                padding: 1rem 0;
+                z-index: 1;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                margin: 0.5rem 0;
+                text-align: center;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-brain"></i>
+                    NeuroDetect
+                </a>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#disease-levels">Disease Levels</a></li>
+                    <li><a href="#detection">Detect</a></li>
+                    <li><a href="#precautions">Precautions</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Early Detection of Alzheimer's Disease</h1>
+            <p>Using advanced AI technology to detect and classify different stages of Alzheimer's disease from brain MRI scans.</p>
+            <div class="hero-buttons">
+                <a href="#detection" class="btn btn-primary">Start Detection</a>
+                <a href="#disease-levels" class="btn btn-outline">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disease Levels Section -->
+    <section id="disease-levels">
+        <div class="container">
+            <div class="section-title">
+                <h2>Understanding Alzheimer's Disease Levels</h2>
+            </div>
+            <div class="levels-container">
+                <div class="level-card">
+                    <div class="level-header">
+                        <h3>CN</h3>
+                        <p>Cognitively Normal</p>
+                    </div>
+                    <div class="level-content">
+                        <div class="level-description cn">
+                            <p><strong>No significant cognitive decline</strong></p>
+                        </div>
+                        <p>Individuals with normal cognitive function who do not show signs of dementia. Key characteristics include:</p>
+                        <ul>
+                            <li>Normal memory function</li>
+                            <li>No difficulty with daily activities</li>
+                            <li>Normal language skills</li>
+                            <li>Typical problem-solving abilities</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="level-card">
+                    <div class="level-header">
+                        <h3>MCI</h3>
+                        <p>Mild Cognitive Impairment</p>
+                    </div>
+                    <div class="level-content">
+                        <div class="level-description mci">
+                            <p><strong>Noticeable cognitive changes</strong></p>
+                        </div>
+                        <p>A transitional stage between normal aging and dementia. Key characteristics include:</p>
+                        <ul>
+                            <li>Memory problems beyond age-normal forgetting</li>
+                            <li>Preserved ability to perform daily activities</li>
+                            <li>Increased risk of developing Alzheimer's</li>
+                            <li>Some difficulty with complex tasks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="level-card">
+                    <div class="level-header">
+                        <h3>EMCI</h3>
+                        <p>Early Mild Cognitive Impairment</p>
+                    </div>
+                    <div class="level-content">
+                        <div class="level-description emci">
+                            <p><strong>Initial stage of cognitive decline</strong></p>
+                        </div>
+                        <p>Earliest detectable phase of MCI with subtle symptoms. Key characteristics include:</p>
+                        <ul>
+                            <li>Mild memory complaints noticed by individual or family</li>
+                            <li>Slight decline in cognitive test performance</li>
+                            <li>Minimal impact on daily functioning</li>
+                            <li>Subtle changes in brain structure may be detectable</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="level-card">
+                    <div class="level-header">
+                        <h3>LMCI</h3>
+                        <p>Late Mild Cognitive Impairment</p>
+                    </div>
+                    <div class="level-content">
+                        <div class="level-description lmci">
+                            <p><strong>More pronounced cognitive decline</strong></p>
+                        </div>
+                        <p>More advanced stage of MCI with clearer symptoms. Key characteristics include:</p>
+                        <ul>
+                            <li>More significant memory and thinking problems</li>
+                            <li>Noticeable decline in cognitive test performance</li>
+                            <li>Some difficulty with complex daily tasks</li>
+                            <li>Higher risk of progression to Alzheimer's disease</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="level-card">
+                    <div class="level-header">
+                        <h3>AD</h3>
+                        <p>Alzheimer's Disease</p>
+                    </div>
+                    <div class="level-content">
+                        <div class="level-description ad">
+                            <p><strong>Significant cognitive impairment</strong></p>
+                        </div>
+                        <p>A progressive neurodegenerative disorder. Key characteristics include:</p>
+                        <ul>
+                            <li>Significant memory loss affecting daily life</li>
+                            <li>Difficulty completing familiar tasks</li>
+                            <li>Problems with language and communication</li>
+                            <li>Disorientation to time and place</li>
+                            <li>Poor judgment and decision-making</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detection Section -->
+    <section id="detection">
+        <div class="container">
+            <div class="section-title">
+                <h2>Alzheimer's Disease Detection</h2>
+            </div>
+            <div class="detection-container">
+                <div class="upload-area">
+                    <h3>Upload Brain MRI Scan</h3>
+                    <p>Upload a brain MRI scan image to detect the stage of Alzheimer's disease.</p>
+
+                    <div class="drop-zone" id="dropZone">
+                        <span class="drop-zone-prompt">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary);"></i>
+                            <p>Drag & Drop your MRI scan or click to browse</p>
+                        </span>
+                        <input type="file" name="file" class="drop-zone-input" id="fileInput" accept="image/*">
+                    </div>
+
+                    <div class="preview-container" id="previewContainer">
+                        <p>Selected Image:</p>
+                        <img src="" alt="Preview" class="preview-image" id="previewImage">
+                        <button class="btn btn-primary" id="detectBtn" style="margin-top: 1rem;">Detect Now</button>
+                    </div>
+                </div>
+
+                <div class="result-area">
+                    <div id="loadingIndicator" style="display: none;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary);"></i>
+                        <p>Analyzing MRI scan...</p>
+                    </div>
+
+                    <div class="result-container" id="resultContainer">
+                        <div class="result-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="result-heading">Detection Results</h3>
+                        <div class="result-details">
+                            <p>Detected Condition: <strong id="resultText">-</strong></p>
+                            <div id="resultDescription"></div>
+                        </div>
+                        <button class="btn btn-outline" id="newScanBtn" style="background-color: var(--primary); color: white;">Analyze Another Scan</button>
+                    </div>
+
+                    <div id="initialMessage">
+                        <i class="fas fa-info-circle" style="font-size: 3rem; color: var(--info);"></i>
+                        <p>Upload an MRI scan to see the detection results here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Precautions Section -->
+    <section id="precautions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Prevention & Management</h2>
+            </div>
+            <div class="precautions-container">
+                <div class="precaution-card">
+                    <div class="precaution-content">
+                        <div class="precaution-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h3>Cardiovascular Health</h3>
+                        <p>Maintain heart health by controlling blood pressure, cholesterol, and diabetes. What's good for your heart is good for your brain.</p>
+                    </div>
+                </div>
+
+                <div class="precaution-card">
+                    <div class="precaution-content">
+                        <div class="precaution-icon">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        <h3>Physical Activity</h3>
+                        <p>Regular exercise increases blood flow to the brain and may reduce the risk of cognitive decline. Aim for at least 150 minutes of moderate activity weekly.</p>
+                    </div>
+                </div>
+
+                <div class="precaution-card">
+                    <div class="precaution-content">
+                        <div class="precaution-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Mental Stimulation</h3>
+                        <p>Keep your brain active with puzzles, reading, learning new skills, and social activities. Mental challenges help maintain cognitive function.</p>
+                    </div>
+                </div>
+
+                <div class="precaution-card">
+                    <div class="precaution-content">
+                        <div class="precaution-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <h3>Healthy Diet</h3>
+                        <p>Follow a Mediterranean or MIND diet rich in fruits, vegetables, whole grains, lean proteins, and healthy fats. Limit processed foods and sugar.</p>
+                    </div>
+                </div>
+
+                <div class="precaution-card">
+                    <div class="precaution-content">
+                        <div class="precaution-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <h3>Quality Sleep</h3>
+                        <p>Aim for 7-8 hours of quality sleep. Poor sleep is linked to higher levels of brain proteins associated with Alzheimer's disease.</p>
+                    </div>
+                </div>
+
+                <div class="precaution-card">
+                    <div class="precaution-content">
+                        <div class="precaution-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Social Engagement</h3>
+                        <p>Maintain strong social connections. Social interaction helps keep cognitive function and may reduce the risk of dementia.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Our Project</h2>
+            </div>
+            <div class="about-container">
+                <div class="about-content">
+                    <h3>Our Mission</h3>
+                    <p>Our mission is to provide accessible, early detection of Alzheimer's disease using cutting-edge artificial intelligence technology. By identifying the disease in its earliest stages, we aim to help patients access appropriate interventions sooner, potentially slowing disease progression and improving quality of life.</p>
+
+                    <h3 style="margin-top: 2rem;">The Technology</h3>
+                    <p>Our system utilizes a Vision Transformer (ViT) neural network model trained on thousands of brain MRI scans. The model can classify brain images into five different categories:</p>
+                    <ul>
+                        <li>CN - Cognitively Normal</li>
+                        <li>MCI - Mild Cognitive Impairment</li>
+                        <li>EMCI - Early Mild Cognitive Impairment</li>
+                        <li>LMCI - Late Mild Cognitive Impairment</li>
+                        <li>AD - Alzheimer's Disease</li>
+                    </ul>
+
+                    <p style="margin-top: 1rem;">This technology provides a preliminary assessment that can help healthcare providers make more informed decisions regarding further testing and treatment options.</p>
+                </div>
+                <div class="about-image">
+                    <img src="static/images/brain_img.png" alt="Brain MRI Analysis">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>NeuroDetect</h3>
+                    <p>Advanced AI-powered Alzheimer's disease detection system helping healthcare providers and patients with early diagnosis.</p>
+
+                </div>
+
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#disease-levels">Disease Levels</a></li>
+                        <li><a href="#detection">Detection</a></li>
+                        <li><a href="#precautions">Precautions</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // File Upload and Detection
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const detectBtn = document.getElementById('detectBtn');
+    const resultContainer = document.getElementById('resultContainer');
+    const resultText = document.getElementById('resultText');
+    const resultDescription = document.getElementById('resultDescription');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const initialMessage = document.getElementById('initialMessage');
+    const newScanBtn = document.getElementById('newScanBtn');
+
+    if (!dropZone || !fileInput) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    // Add file via click
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Handle file selection
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            console.log('File selected:', file.name);
+            handleFiles([file]);
+        }
+    });
+
+    // Handle drag & drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('drop-zone-hover');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drop-zone-hover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drop-zone-hover');
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            console.log('File dropped:', e.dataTransfer.files[0].name);
+            handleFiles(e.dataTransfer.files);
+        }
+    });
+
+    // Process selected files
+    function handleFiles(files) {
+        const file = files[0];
+
+        if (!file.type.match('image.*')) {
+            alert('Please upload an image file.');
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+            dropZone.style.display = 'none';
+            initialMessage.style.display = 'none';
+            console.log('Image preview loaded');
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    // Detection process
+    detectBtn.addEventListener('click', function() {
+        if (!fileInput.files || !fileInput.files[0]) {
+            alert('Please select an image file first.');
+            return;
+        }
+
+        // Hide preview and show loading
+        previewContainer.style.display = 'none';
+        loadingIndicator.style.display = 'block';
+        console.log('Starting detection process');
+
+        // Create form data with the image file
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        // Send to backend for prediction
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response received:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            // Hide loading
+            loadingIndicator.style.display = 'none';
+
+            // Check if there was an error
+            if (data.error) {
+                resultText.textContent = 'Error';
+                resultDescription.innerHTML = `<p class="error-message">${data.error}</p>`;
+                console.error('Detection error:', data.error);
+            } else {
+                // Display result
+                resultText.textContent = data.prediction;
+                console.log('Prediction result:', data.prediction);
+
+                // Add description based on prediction
+                let description = '';
+                switch(data.prediction) {
+                    case 'CN':
+                        description = '<div class="level-description cn"><p><strong>Cognitively Normal:</strong> No significant cognitive decline detected.</p></div>';
+                        break;
+                    case 'MCI':
+                        description = '<div class="level-description mci"><p><strong>Mild Cognitive Impairment:</strong> Noticeable cognitive changes detected that are greater than expected for age.</p></div>';
+                        break;
+                    case 'EMCI':
+                        description = '<div class="level-description emci"><p><strong>Early Mild Cognitive Impairment:</strong> Initial stage of cognitive decline detected with subtle symptoms.</p></div>';
+                        break;
+                    case 'LMCI':
+                        description = '<div class="level-description lmci"><p><strong>Late Mild Cognitive Impairment:</strong> More pronounced cognitive decline detected with clearer symptoms.</p></div>';
+                        break;
+                    case 'AD':
+                        description = '<div class="level-description ad"><p><strong>Alzheimer\'s Disease:</strong> Significant cognitive impairment detected consistent with Alzheimer\'s disease.</p></div>';
+                        break;
+                    default:
+                        description = '<p>Analysis complete. Please consult with a healthcare professional for interpretation.</p>';
+                }
+
+                resultDescription.innerHTML = description + '<p class="mt-3"><strong>Note:</strong> This is an AI-assisted preliminary assessment. Please consult with a healthcare professional for a proper diagnosis.</p>';
+            }
+
+            // Show results
+            resultContainer.style.display = 'block';
+        })
+        .catch(error => {
+            // Handle error
+            loadingIndicator.style.display = 'none';
+            resultText.textContent = 'Error';
+            resultDescription.innerHTML = '<p class="error-message">An error occurred during detection. Please try again.</p>';
+            resultContainer.style.display = 'block';
+            console.error('Error:', error);
+        });
+    });
+
+    // Reset for new scan
+    newScanBtn.addEventListener('click', function() {
+        fileInput.value = '';
+        previewImage.src = '';
+        resultContainer.style.display = 'none';
+        dropZone.style.display = 'block';
+        initialMessage.style.display = 'block';
+        console.log('Reset for new scan');
+    });
+});
+    </script>
+</body>
+</html>
